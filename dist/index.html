@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetCare - Your Pet's Wellness Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #14b8a6;
+        }
+        .hero-overlay {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-white shadow-lg z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2 cursor-pointer" onclick="showPage('home')">
+                    <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center">
+                        <i data-lucide="heart" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-800">PetCare</span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600 active" onclick="showPage('home')">Home</a>
+                    <a href="#" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600" onclick="showPage('pets')">My Pets</a>
+                    <a href="#" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600" onclick="showPage('appointments')">Appointments</a>
+                    <a href="#" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600" onclick="showPage('mall')">Pet Mall</a>
+                    <a href="#" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600" onclick="showPage('community')">Community</a>
+                    <a href="#" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600" onclick="showPage('dashboard')">Dashboard</a>
+                </div>
+
+                <!-- Desktop Actions -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <button class="relative p-2 text-gray-700 hover:text-teal-600 transition-colors">
+                        <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                        <span class="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                    </button>
+                    <button class="bg-teal-600 text-white px-4 py-2 rounded-full hover:bg-teal-700 transition-colors flex items-center space-x-2">
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                        <span>Login</span>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-gray-700 hover:text-teal-600 p-2">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="md:hidden bg-white border-t mobile-menu fixed left-0 top-16 w-full h-full">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#" class="block px-3 py-2 text-base font-medium rounded-md text-teal-600 bg-teal-50" onclick="showPage('home'); toggleMobileMenu()">Home</a>
+                <a href="#" class="block px-3 py-2 text-base font-medium rounded-md text-gray-700 hover:text-teal-600 hover:bg-gray-50" onclick="showPage('pets'); toggleMobileMenu()">My Pets</a>
+                <a href="#" class="block px-3 py-2 text-base font-medium rounded-md text-gray-700 hover:text-teal-600 hover:bg-gray-50" onclick="showPage('appointments'); toggleMobileMenu()">Appointments</a>
+                <a href="#" class="block px-3 py-2 text-base font-medium rounded-md text-gray-700 hover:text-teal-600 hover:bg-gray-50" onclick="showPage('mall'); toggleMobileMenu()">Pet Mall</a>
+                <a href="#" class="block px-3 py-2 text-base font-medium rounded-md text-gray-700 hover:text-teal-600 hover:bg-gray-50" onclick="showPage('community'); toggleMobileMenu()">Community</a>
+                <a href="#" class="block px-3 py-2 text-base font-medium rounded-md text-gray-700 hover:text-teal-600 hover:bg-gray-50" onclick="showPage('dashboard'); toggleMobileMenu()">Dashboard</a>
+                <div class="pt-4 border-t">
+                    <button class="w-full bg-teal-600 text-white px-4 py-2 rounded-full hover:bg-teal-700 transition-colors">
+                        Login / Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <!-- Hero Section -->
+            <section class="relative bg-gradient-to-r from-teal-600 to-teal-400 text-white py-20 bg-cover bg-center bg-no-repeat" style="background-image: linear-gradient(rgba(20, 184, 166, 0.8), rgba(20, 184, 166, 0.6)), url('https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=1600');">
+                <div class="hero-overlay absolute inset-0"></div>
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center">
+                        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                            Your Pet's Wellness Journey
+                            <br>
+                            <span class="text-orange-300">Starts Here</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                            Comprehensive care, expert advice, and a loving community for your furry friends
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button onclick="showPage('appointments')" class="bg-orange-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-orange-600 transition-colors">
+                                Book an Appointment
+                            </button>
+                            <button onclick="showPage('pets')" class="bg-white text-teal-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors">
+                                Add Your Pet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Access Grid -->
+            <section class="py-16 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Quick Access</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="group p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 card-hover cursor-pointer" onclick="showPage('appointments')">
+                            <div class="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="calendar" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2 text-gray-800">Book a Doctor</h3>
+                            <p class="text-gray-600">Schedule an appointment with our veterinarians</p>
+                        </div>
+                        <div class="group p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 card-hover cursor-pointer" onclick="showPage('pets')">
+                            <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="plus" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2 text-gray-800">Add a Pet</h3>
+                            <p class="text-gray-600">Register your new furry friend</p>
+                        </div>
+                        <div class="group p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 card-hover cursor-pointer" onclick="showPage('mall')">
+                            <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="shopping-bag" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2 text-gray-800">Pet Mall</h3>
+                            <p class="text-gray-600">Shop for food, toys, and accessories</p>
+                        </div>
+                        <div class="group p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 card-hover cursor-pointer" onclick="showPage('community')">
+                            <div class="w-12 h-12 bg-pink-500 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="message-circle" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2 text-gray-800">Community</h3>
+                            <p class="text-gray-600">Connect with other pet owners</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Popular Products -->
+            <section class="py-16 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center mb-12">
+                        <h2 class="text-3xl font-bold text-gray-800">Popular Products</h2>
+                        <button onclick="showPage('mall')" class="text-teal-600 hover:text-teal-700 font-semibold">
+                            View All →
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow card-hover">
+                            <div class="aspect-square overflow-hidden">
+                                <img src="https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Premium Dog Food" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold mb-2">Premium Dog Food</h3>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg font-bold text-teal-600">$45.99</span>
+                                    <div class="flex items-center space-x-1">
+                                        <i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-current"></i>
+                                        <span class="text-sm text-gray-600">4.8</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow card-hover">
+                            <div class="aspect-square overflow-hidden">
+                                <img src="https://images.pexels.com/photos/1404819/pexels-photo-1404819.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Interactive Cat Toy" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold mb-2">Interactive Cat Toy</h3>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg font-bold text-teal-600">$19.99</span>
+                                    <div class="flex items-center space-x-1">
+                                        <i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-current"></i>
+                                        <span class="text-sm text-gray-600">4.6</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow card-hover">
+                            <div class="aspect-square overflow-hidden">
+                                <img src="https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Comfort Pet Bed" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold mb-2">Comfort Pet Bed</h3>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg font-bold text-teal-600">$89.99</span>
+                                    <div class="flex items-center space-x-1">
+                                        <i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-current"></i>
+                                        <span class="text-sm text-gray-600">4.9</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow card-hover">
+                            <div class="aspect-square overflow-hidden">
+                                <img src="https://images.pexels.com/photos/3380736/pexels-photo-3380736.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Health Supplements" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold mb-2">Health Supplements</h3>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg font-bold text-teal-600">$32.99</span>
+                                    <div class="flex items-center space-x-1">
+                                        <i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-current"></i>
+                                        <span class="text-sm text-gray-600">4.7</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Customer Reviews Section -->
+            <section class="py-16 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">What Pet Parents Say</h2>
+                        <p class="text-xl text-gray-600">Trusted by thousands of pet owners worldwide</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Review 1 -->
+                        <div class="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
+                            <div class="flex items-center mb-4">
+                                <div class="flex text-yellow-400">
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 mb-4 italic">"PetCare has been a lifesaver! The veterinarians are incredibly knowledgeable and caring. My golden retriever Max loves going for his checkups now. The online booking system makes scheduling so convenient."</p>
+                            <div class="flex items-center">
+                                <img src="https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Sarah Mitchell" class="w-12 h-12 rounded-full object-cover mr-4">
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Sarah Mitchell</h4>
+                                    <p class="text-sm text-gray-600">Max's Mom • Golden Retriever</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Review 2 -->
+                        <div class="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
+                            <div class="flex items-center mb-4">
+                                <div class="flex text-yellow-400">
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 mb-4 italic">"The community feature is amazing! I've connected with other cat parents and learned so much about Persian cat care. The pet mall has everything I need, and the quality is always top-notch."</p>
+                            <div class="flex items-center">
+                                <img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Mike Rodriguez" class="w-12 h-12 rounded-full object-cover mr-4">
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Mike Rodriguez</h4>
+                                    <p class="text-sm text-gray-600">Luna's Dad • Persian Cat</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Review 3 -->
+                        <div class="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
+                            <div class="flex items-center mb-4">
+                                <div class="flex text-yellow-400">
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 mb-4 italic">"Emergency care saved Charlie's life when he ate something he shouldn't have. The 24/7 availability and quick response time were incredible. I can't thank the PetCare team enough!"</p>
+                            <div class="flex items-center">
+                                <img src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Emma Johnson" class="w-12 h-12 rounded-full object-cover mr-4">
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Emma Johnson</h4>
+                                    <p class="text-sm text-gray-600">Charlie's Mom • Beagle</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review Stats -->
+                    <div class="mt-12 bg-gradient-to-r from-teal-50 to-orange-50 rounded-2xl p-8">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+                            <div>
+                                <div class="text-3xl font-bold text-teal-600 mb-2">4.9</div>
+                                <div class="text-sm text-gray-600">Average Rating</div>
+                                <div class="flex justify-center mt-2">
+                                    <div class="flex text-yellow-400">
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold text-orange-600 mb-2">2,847</div>
+                                <div class="text-sm text-gray-600">Happy Customers</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold text-purple-600 mb-2">15,000+</div>
+                                <div class="text-sm text-gray-600">Pets Cared For</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold text-pink-600 mb-2">98%</div>
+                                <div class="text-sm text-gray-600">Satisfaction Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="py-16 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Why Choose PetCare?</h2>
+                        <p class="text-xl text-gray-600">Comprehensive care for your beloved pets</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="shield" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Expert Veterinarians</h3>
+                            <p class="text-gray-600">Certified professionals with years of experience caring for pets</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="heart" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Comprehensive Care</h3>
+                            <p class="text-gray-600">From routine check-ups to emergency care, we've got you covered</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="award" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Premium Products</h3>
+                            <p class="text-gray-600">Curated selection of the best food, toys, and accessories</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Pet Management Page -->
+        <div id="pets" class="page">
+            <div class="min-h-screen bg-gray-50 py-8">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h1 class="text-3xl font-bold text-gray-800">My Pets</h1>
+                        <button onclick="showAddPetModal()" class="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition-colors flex items-center space-x-2">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                            <span>Add New Pet</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow card-hover">
+                            <div class="aspect-square overflow-hidden">
+                                <img src="https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Max" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-xl font-semibold text-gray-800">Max</h3>
+                                    <div class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Excellent</div>
+                                </div>
+                                <p class="text-gray-600 mb-1">Golden Retriever</p>
+                                <p class="text-gray-600 mb-4">3 years • 32 kg</p>
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i data-lucide="shield" class="w-4 h-4 mr-2"></i>
+                                        Last vaccination: 2024-01-15
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
+                                        Last checkup: 2024-02-20
+                                    </div>
+                                </div>
+                                <button class="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow card-hover">
+                            <div class="aspect-square overflow-hidden">
+                                <img src="https://images.pexels.com/photos/1404819/pexels-photo-1404819.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Luna" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-xl font-semibold text-gray-800">Luna</h3>
+                                    <div class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Good</div>
+                                </div>
+                                <p class="text-gray-600 mb-1">Persian Cat</p>
+                                <p class="text-gray-600 mb-4">2 years • 4.5 kg</p>
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i data-lucide="shield" class="w-4 h-4 mr-2"></i>
+                                        Last vaccination: 2024-01-10
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
+                                        Last checkup: 2024-02-25
+                                    </div>
+                                </div>
+                                <button class="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow card-hover">
+                            <div class="aspect-square overflow-hidden">
+                                <img src="https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Charlie" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-xl font-semibold text-gray-800">Charlie</h3>
+                                    <div class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Excellent</div>
+                                </div>
+                                <p class="text-gray-600 mb-1">Beagle</p>
+                                <p class="text-gray-600 mb-4">1 year • 15 kg</p>
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i data-lucide="shield" class="w-4 h-4 mr-2"></i>
+                                        Last vaccination: 2024-02-01
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
+                                        Last checkup: 2024-03-01
+                                    </div>
+                                </div>
+                                <button class="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Section -->
+                    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Total Pets</p>
+                                    <p class="text-2xl font-bold text-gray-800">3</p>
+                                </div>
+                                <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="heart" class="w-6 h-6 text-teal-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Upcoming Appointments</p>
+                                    <p class="text-2xl font-bold text-gray-800">2</p>
+                                </div>
+                                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="calendar" class="w-6 h-6 text-orange-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Health Status</p>
+                                    <p class="text-2xl font-bold text-green-600">Excellent</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="shield" class="w-6 h-6 text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments Page -->
+        <div id="appointments" class="page">
+            <div class="min-h-screen bg-gray-50 py-8">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-3xl font-bold text-center mb-8">Book an Appointment</h1>
+                    
+                    <!-- Step Indicator -->
+                    <div class="flex items-center justify-center mb-8">
+                        <div class="flex items-center">
+                            <div class="flex items-center justify-center w-10 h-10 rounded-full bg-teal-600 text-white">
+                                <i data-lucide="user" class="w-5 h-5"></i>
+                            </div>
+                            <div class="w-12 h-1 mx-2 bg-gray-200"></div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500">
+                                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            </div>
+                            <div class="w-12 h-1 mx-2 bg-gray-200"></div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500">
+                                <i data-lucide="user" class="w-5 h-5"></i>
+                            </div>
+                            <div class="w-12 h-1 mx-2 bg-gray-200"></div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500">
+                                <i data-lucide="calendar" class="w-5 h-5"></i>
+                            </div>
+                            <div class="w-12 h-1 mx-2 bg-gray-200"></div>
+                        </div>
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                        <h2 class="text-2xl font-bold text-center mb-6">Select Your Pet</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="p-4 border-2 border-teal-500 bg-teal-50 rounded-lg cursor-pointer transition-all">
+                                <div class="aspect-square rounded-lg overflow-hidden mb-3">
+                                    <img src="https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Max" class="w-full h-full object-cover">
+                                </div>
+                                <h3 class="font-semibold text-lg">Max</h3>
+                                <p class="text-gray-600">Golden Retriever</p>
+                            </div>
+                            <div class="p-4 border-2 border-gray-200 hover:border-gray-300 rounded-lg cursor-pointer transition-all">
+                                <div class="aspect-square rounded-lg overflow-hidden mb-3">
+                                    <img src="https://images.pexels.com/photos/1404819/pexels-photo-1404819.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Luna" class="w-full h-full object-cover">
+                                </div>
+                                <h3 class="font-semibold text-lg">Luna</h3>
+                                <p class="text-gray-600">Persian Cat</p>
+                            </div>
+                            <div class="p-4 border-2 border-gray-200 hover:border-gray-300 rounded-lg cursor-pointer transition-all">
+                                <div class="aspect-square rounded-lg overflow-hidden mb-3">
+                                    <img src="https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Charlie" class="w-full h-full object-cover">
+                                </div>
+                                <h3 class="font-semibold text-lg">Charlie</h3>
+                                <p class="text-gray-600">Beagle</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="flex justify-between">
+                        <button class="bg-gray-200 text-gray-500 cursor-not-allowed px-6 py-3 rounded-lg flex items-center space-x-2">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                            <span>Previous</span>
+                        </button>
+                        
+                        <button class="bg-teal-600 text-white hover:bg-teal-700 px-6 py-3 rounded-lg flex items-center space-x-2">
+                            <span>Next</span>
+                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mall Page -->
+        <div id="mall" class="page">
+            <div class="min-h-screen bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-4">Pet Mall</h1>
+                        <div class="flex flex-col lg:flex-row gap-4 items-center">
+                            <div class="flex-1 relative">
+                                <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                                <input type="text" placeholder="Search for products..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            </div>
+                            <div class="relative">
+                                <select class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                    <option value="featured">Featured</option>
+                                    <option value="price-low">Price: Low to High</option>
+                                    <option value="price-high">Price: High to Low</option>
+                                    <option value="rating">Highest Rated</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        <!-- Sidebar Filters -->
+                        <div class="lg:w-64">
+                            <div class="bg-white rounded-xl shadow-md p-6">
+                                <h3 class="text-lg font-semibold mb-4">Categories</h3>
+                                <div class="space-y-2">
+                                    <button class="w-full text-left px-3 py-2 rounded-lg bg-teal-50 text-teal-700">
+                                        <div class="flex justify-between items-center">
+                                            <span>All Products</span>
+                                            <span class="text-sm text-gray-500">156</span>
+                                        </div>
+                                    </button>
+                                    <button class="w-full text-left px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
+                                        <div class="flex justify-between items-center">
+                                            <span>Food & Treats</span>
+                                            <span class="text-sm text-gray-500">45</span>
+                                        </div>
+                                    </button>
+                                    <button class="w-full text-left px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
+                                        <div class="flex justify-between items-center">
+                                            <span>Toys & Entertainment</span>
+                                            <span class="text-sm text-gray-500">32</span>
+                                        </div>
+                                    </button>
+                                    <button class="w-full text-left px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50">
+                                        <div class="flex justify-between items-center">
+                                            <span>Health & Supplements</span>
+                                            <span class="text-sm text-gray-500">24</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Grid -->
+                        <div class="flex-1">
+                            <div class="mb-6">
+                                <p class="text-gray-600">Showing 8 of 156 products</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow card-hover">
+                                    <div class="relative aspect-square overflow-hidden">
+                                        <img src="https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Premium Dog Food" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                                        <button class="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md hover:bg-gray-50">
+                                            <i data-lucide="heart" class="w-5 h-5 text-gray-400"></i>
+                                        </button>
+                                        <div class="absolute top-3 left-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                            Best Seller
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="font-semibold text-lg mb-2">Premium Dry Dog Food</h3>
+                                        <div class="flex items-center mb-2">
+                                            <div class="flex items-center space-x-1">
+                                                <i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-current"></i>
+                                                <span class="text-sm font-medium">4.8</span>
+                                                <span class="text-sm text-gray-500">(324)</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-lg font-bold text-teal-600">$45.99</span>
+                                                <span class="text-sm text-gray-500 line-through">$55.99</span>
+                                            </div>
+                                            <button class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors flex items-center space-x-1">
+                                                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                                                <span>Add</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow card-hover">
+                                    <div class="relative aspect-square overflow-hidden">
+                                        <img src="https://images.pexels.com/photos/1404819/pexels-photo-1404819.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Interactive Cat Toy" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                                        <button class="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md hover:bg-gray-50">
+                                            <i data-lucide="heart" class="w-5 h-5 text-red-500 fill-current"></i>
+                                        </button>
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="font-semibold text-lg mb-2">Interactive Cat Toy Set</h3>
+                                        <div class="flex items-center mb-2">
+                                            <div class="flex items-center space-x-1">
+                                                <i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-current"></i>
+                                                <span class="text-sm font-medium">4.6</span>
+                                                <span class="text-sm text-gray-500">(189)</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-lg font-bold text-teal-600">$19.99</span>
+                                            <button class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors flex items-center space-x-1">
+                                                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                                                <span>Add</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow card-hover">
+                                    <div class="relative aspect-square overflow-hidden">
+                                        <img src="https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Orthopedic Pet Bed" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                                        <button class="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md hover:bg-gray-50">
+                                            <i data-lucide="heart" class="w-5 h-5 text-gray-400"></i>
+                                        </button>
+                                        <div class="absolute top-3 left-3 bg-purple-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                            Premium
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="font-semibold text-lg mb-2">Orthopedic Pet Bed</h3>
+                                        <div class="flex items-center mb-2">
+                                            <div class="flex items-center space-x-1">
+                                                <i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-current"></i>
+                                                <span class="text-sm font-medium">4.9</span>
+                                                <span class="text-sm text-gray-500">(256)</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-lg font-bold text-teal-600">$89.99</span>
+                                                <span class="text-sm text-gray-500 line-through">$109.99</span>
+                                            </div>
+                                            <button class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors flex items-center space-x-1">
+                                                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                                                <span>Add</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-12">
+                                <button class="bg-teal-600 text-white px-8 py-3 rounded-lg hover:bg-teal-700 transition-colors">
+                                    Load More Products
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Page -->
+        <div id="community" class="page">
+            <div class="min-h-screen bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-4">Pet Community</h1>
+                        <div class="flex space-x-6">
+                            <button class="px-4 py-2 rounded-lg bg-teal-600 text-white">Feed</button>
+                            <button class="px-4 py-2 rounded-lg text-gray-600 hover:text-teal-600">Trending</button>
+                            <button class="px-4 py-2 rounded-lg text-gray-600 hover:text-teal-600">Following</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                        <div class="lg:col-span-3">
+                            <!-- Post Creation -->
+                            <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                                <div class="flex items-start space-x-3">
+                                    <img src="https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Your avatar" class="w-10 h-10 rounded-full object-cover">
+                                    <div class="flex-1">
+                                        <textarea placeholder="What's happening with your pet today?" class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-teal-500" rows="3"></textarea>
+                                        <div class="flex items-center justify-between mt-4">
+                                            <div class="flex items-center space-x-4">
+                                                <button class="flex items-center space-x-2 text-gray-500 hover:text-teal-500 transition-colors">
+                                                    <i data-lucide="camera" class="w-5 h-5"></i>
+                                                    <span class="text-sm">Photo</span>
+                                                </button>
+                                                <button class="flex items-center space-x-2 text-gray-500 hover:text-teal-500 transition-colors">
+                                                    <i data-lucide="smile" class="w-5 h-5"></i>
+                                                    <span class="text-sm">Emoji</span>
+                                                </button>
+                                            </div>
+                                            <button class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors flex items-center space-x-2">
+                                                <i data-lucide="send" class="w-4 h-4"></i>
+                                                <span>Post</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Posts Feed -->
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                                    <div class="p-4 flex items-center space-x-3">
+                                        <img src="https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Sarah Mitchell" class="w-10 h-10 rounded-full object-cover">
+                                        <div class="flex-1">
+                                            <div class="flex items-center space-x-2">
+                                                <h3 class="font-semibold text-gray-800">Sarah Mitchell</h3>
+                                                <div class="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                                                    <span class="text-white text-xs">✓</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-sm text-gray-500">2 hours ago</p>
+                                        </div>
+                                    </div>
+                                    <div class="px-4 pb-3">
+                                        <p class="text-gray-800 mb-3">Max learned a new trick today! He can now fetch his favorite toy and put it back in the basket. So proud of my golden boy! 🐕✨</p>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="text-teal-600 hover:text-teal-700 cursor-pointer text-sm">#GoldenRetriever</span>
+                                            <span class="text-teal-600 hover:text-teal-700 cursor-pointer text-sm">#Training</span>
+                                            <span class="text-teal-600 hover:text-teal-700 cursor-pointer text-sm">#ProudParent</span>
+                                        </div>
+                                    </div>
+                                    <div class="aspect-video overflow-hidden">
+                                        <img src="https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Post content" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="p-4 border-t border-gray-100">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-6">
+                                                <button class="flex items-center space-x-2 text-gray-500 hover:text-red-500 transition-colors">
+                                                    <i data-lucide="heart" class="w-5 h-5"></i>
+                                                    <span class="text-sm">24</span>
+                                                </button>
+                                                <button class="flex items-center space-x-2 text-gray-500 hover:text-teal-500 transition-colors">
+                                                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                                                    <span class="text-sm">8</span>
+                                                </button>
+                                                <button class="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors">
+                                                    <i data-lucide="share-2" class="w-5 h-5"></i>
+                                                    <span class="text-sm">3</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                                    <div class="p-4 flex items-center space-x-3">
+                                        <img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Mike Rodriguez" class="w-10 h-10 rounded-full object-cover">
+                                        <div class="flex-1">
+                                            <h3 class="font-semibold text-gray-800">Mike Rodriguez</h3>
+                                            <p class="text-sm text-gray-500">4 hours ago</p>
+                                        </div>
+                                    </div>
+                                    <div class="px-4 pb-3">
+                                        <p class="text-gray-800 mb-3">Luna found her favorite sunny spot by the window. She spends hours here just watching the world go by. Cats really know how to live! 😸</p>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="text-teal-600 hover:text-teal-700 cursor-pointer text-sm">#CatLife</span>
+                                            <span class="text-teal-600 hover:text-teal-700 cursor-pointer text-sm">#Persian</span>
+                                            <span class="text-teal-600 hover:text-teal-700 cursor-pointer text-sm">#Sunshine</span>
+                                        </div>
+                                    </div>
+                                    <div class="aspect-video overflow-hidden">
+                                        <img src="https://images.pexels.com/photos/1404819/pexels-photo-1404819.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Post content" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="p-4 border-t border-gray-100">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-6">
+                                                <button class="flex items-center space-x-2 text-red-500 hover:text-red-500 transition-colors">
+                                                    <i data-lucide="heart" class="w-5 h-5 fill-current"></i>
+                                                    <span class="text-sm">18</span>
+                                                </button>
+                                                <button class="flex items-center space-x-2 text-gray-500 hover:text-teal-500 transition-colors">
+                                                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                                                    <span class="text-sm">5</span>
+                                                </button>
+                                                <button class="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors">
+                                                    <i data-lucide="share-2" class="w-5 h-5"></i>
+                                                    <span class="text-sm">2</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar -->
+                        <div class="lg:col-span-1">
+                            <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                                <h3 class="text-lg font-semibold mb-4">Popular Tags</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-sm hover:bg-teal-100 transition-colors">#DogTraining</button>
+                                    <button class="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-sm hover:bg-teal-100 transition-colors">#CatLife</button>
+                                    <button class="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-sm hover:bg-teal-100 transition-colors">#PetHealth</button>
+                                    <button class="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-sm hover:bg-teal-100 transition-colors">#Puppies</button>
+                                    <button class="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-sm hover:bg-teal-100 transition-colors">#Adoption</button>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-md p-6">
+                                <h3 class="text-lg font-semibold mb-4">Community Guidelines</h3>
+                                <div class="space-y-3 text-sm text-gray-600">
+                                    <p>• Be respectful and kind to all members</p>
+                                    <p>• Share pet-related content only</p>
+                                    <p>• No spam or promotional content</p>
+                                    <p>• Report inappropriate behavior</p>
+                                    <p>• Keep discussions constructive</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page">
+            <div class="min-h-screen bg-gray-50 py-8">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+                        <p class="text-gray-600 mt-2">Welcome back! Here's what's happening with your pets.</p>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Total Pets</p>
+                                    <p class="text-2xl font-bold text-gray-800">3</p>
+                                    <p class="text-sm text-green-600">All healthy</p>
+                                </div>
+                                <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="heart" class="w-6 h-6 text-teal-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Appointments</p>
+                                    <p class="text-2xl font-bold text-gray-800">2</p>
+                                    <p class="text-sm text-orange-600">Upcoming</p>
+                                </div>
+                                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="calendar" class="w-6 h-6 text-orange-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Community Posts</p>
+                                    <p class="text-2xl font-bold text-gray-800">15</p>
+                                    <p class="text-sm text-blue-600">This month</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="users" class="w-6 h-6 text-blue-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Orders</p>
+                                    <p class="text-2xl font-bold text-gray-800">$234</p>
+                                    <p class="text-sm text-purple-600">This month</p>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="shopping-bag" class="w-6 h-6 text-purple-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Left Column -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="bg-white rounded-xl shadow-md p-6">
+                                <h3 class="text-lg font-semibold mb-6">Health Summary</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                    <div class="bg-green-50 rounded-lg p-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-sm text-green-600">Current Weight</p>
+                                                <p class="text-xl font-bold text-green-800">32 kg</p>
+                                            </div>
+                                            <i data-lucide="trending-up" class="w-6 h-6 text-green-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-blue-50 rounded-lg p-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-sm text-blue-600">Last Checkup</p>
+                                                <p class="text-xl font-bold text-blue-800">Feb 20</p>
+                                            </div>
+                                            <i data-lucide="calendar" class="w-6 h-6 text-blue-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-purple-50 rounded-lg p-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-sm text-purple-600">Health Score</p>
+                                                <p class="text-xl font-bold text-purple-800">95%</p>
+                                            </div>
+                                            <i data-lucide="award" class="w-6 h-6 text-purple-600"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                                    <p class="text-gray-500">Weight Chart Placeholder</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="space-y-6">
+                            <div class="bg-white rounded-xl shadow-md p-6">
+                                <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
+                                <div class="space-y-3">
+                                    <button onclick="showPage('appointments')" class="w-full bg-teal-600 text-white px-4 py-3 rounded-lg hover:bg-teal-700 transition-colors flex items-center justify-center space-x-2">
+                                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                                        <span>Book Appointment</span>
+                                    </button>
+                                    <button class="w-full bg-orange-600 text-white px-4 py-3 rounded-lg hover:bg-orange-700 transition-colors flex items-center justify-center space-x-2">
+                                        <i data-lucide="bell" class="w-5 h-5"></i>
+                                        <span>Set Reminder</span>
+                                    </button>
+                                    <button class="w-full bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center space-x-2">
+                                        <i data-lucide="activity" class="w-5 h-5"></i>
+                                        <span>Log Activity</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-md p-6">
+                                <h3 class="text-lg font-semibold mb-4">Upcoming Appointments</h3>
+                                <div class="space-y-4">
+                                    <div class="border border-gray-200 rounded-lg p-4">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h4 class="font-semibold">Max</h4>
+                                            <span class="text-sm text-gray-500">10:00 AM</span>
+                                        </div>
+                                        <p class="text-sm text-gray-600 mb-1">Vaccination</p>
+                                        <p class="text-sm text-gray-600">Dr. Sarah Johnson</p>
+                                        <p class="text-sm font-medium text-teal-600 mt-2">March 15, 2024</p>
+                                    </div>
+                                    <div class="border border-gray-200 rounded-lg p-4">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h4 class="font-semibold">Luna</h4>
+                                            <span class="text-sm text-gray-500">2:30 PM</span>
+                                        </div>
+                                        <p class="text-sm text-gray-600 mb-1">Health Check</p>
+                                        <p class="text-sm text-gray-600">Dr. Michael Chen</p>
+                                        <p class="text-sm font-medium text-teal-600 mt-2">March 20, 2024</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center">
+                            <i data-lucide="heart" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">PetCare</span>
+                    </div>
+                    <p class="text-gray-300 mb-6">
+                        Providing comprehensive care, expert advice, and a loving community for your furry friends. 
+                        Your pet's wellness journey starts here.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-lucide="facebook" class="w-6 h-6"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-lucide="twitter" class="w-6 h-6"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-lucide="instagram" class="w-6 h-6"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Quick Links</h3>
+                    <div class="space-y-3">
+                        <a href="#" class="block text-gray-300 hover:text-white transition-colors">Book Appointment</a>
+                        <a href="#" class="block text-gray-300 hover:text-white transition-colors">Pet Registration</a>
+                        <a href="#" class="block text-gray-300 hover:text-white transition-colors">Emergency Care</a>
+                        <a href="#" class="block text-gray-300 hover:text-white transition-colors">Health Records</a>
+                        <a href="#" class="block text-gray-300 hover:text-white transition-colors">Community Forum</a>
+                        <a href="#" class="block text-gray-300 hover:text-white transition-colors">Pet Mall</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Contact Info</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="phone" class="w-5 h-5 text-teal-400"></i>
+                            <span class="text-gray-300">+1 (555) 123-4567</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="mail" class="w-5 h-5 text-teal-400"></i>
+                            <span class="text-gray-300">info@petcare.com</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="map-pin" class="w-5 h-5 text-teal-400"></i>
+                            <span class="text-gray-300">123 Pet Care Street<br>Animal City, AC 12345</span>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <h4 class="text-sm font-semibold mb-2">Emergency Hours</h4>
+                        <p class="text-gray-300 text-sm">
+                            24/7 Emergency Care Available<br>
+                            Call: +1 (555) 911-PETS
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center">
+                <p class="text-gray-400">
+                    © 2024 PetCare. All rights reserved. | Privacy Policy | Terms of Service
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add Pet Modal -->
+    <div id="addPetModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold">Add New Pet</h3>
+                <button onclick="hideAddPetModal()" class="text-gray-500 hover:text-gray-700">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Pet Name</label>
+                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Enter pet name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Pet Type</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <option value="">Select pet type</option>
+                        <option value="dog">Dog</option>
+                        <option value="cat">Cat</option>
+                        <option value="bird">Bird</option>
+                        <option value="rabbit">Rabbit</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Breed</label>
+                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Enter breed">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Age</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="e.g., 2 years">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Weight</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="e.g., 25 kg">
+                    </div>
+                </div>
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" onclick="hideAddPetModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
+                        Add Pet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Navigation functionality
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update navigation active state
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+            
+            // Find and activate the corresponding nav link
+            const activeLink = document.querySelector(`[onclick="showPage('${pageId}')"]`);
+            if (activeLink && activeLink.classList.contains('nav-link')) {
+                activeLink.classList.add('active');
+            }
+        }
+
+        // Mobile menu functionality
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('open');
+        }
+
+        // Modal functionality
+        function showAddPetModal() {
+            document.getElementById('addPetModal').classList.remove('hidden');
+        }
+
+        function hideAddPetModal() {
+            document.getElementById('addPetModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('addPetModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideAddPetModal();
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('home');
+        });
+    </script>
+</body>
+</html>
