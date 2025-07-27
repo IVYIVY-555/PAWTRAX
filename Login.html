@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PawTrax</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #FF7F50 100%, #dd6236 200%, #8f1e00 300%);
+        }
+        .bg-color {
+            background: #F7EEDD;
+        }
+        .bg-200 {
+            background: #c4bcab;
+        }
+        .text-color {
+            color:#000000;
+        }
+        .accent-color {
+            color:#8B4513;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .footer-links p {
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #FF7F50;
+        }
+        .hero-overlay {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .dropdown {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        .dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .login-container {
+            background-color: #F7EEDD;
+            min-height: calc(100vh - 64px - 56px);
+        }
+        
+        /* New styles for the login/signup form */
+        :root {
+            --primary-100: #FF7F50;
+            --primary-200: #dd6236;
+            --primary-300: #8f1e00;
+            --accent-100: #8B4513;
+            --accent-200: #ffd299;
+            --text-100: #000000;
+            --text-200: #2c2c2c;
+            --bg-100: #F7EEDD;
+            --bg-200: #ede4d3;
+            --bg-300: #c4bcab;
+        }
+        
+        .auth-form {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--accent-100);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-100);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-200);
+        }
+        
+        .text-accent {
+            color: var(--accent-100);
+        }
+        
+        .border-accent {
+            border-color: var(--accent-100);
+        }
+        
+        .tab-active {
+            color: var(--accent-100);
+            border-bottom: 2px solid var(--accent-100);
+        }
+        
+        /* 新增购物车持久化相关样式 */
+        .cart-item {
+            display: flex;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .quantity-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .remove-btn {
+            color: #ef4444;
+            margin-left: 1rem;
+            cursor: pointer;
+        }
+        .btn-press:active {
+            transform: scale(0.98);
+        }
+        .toast {
+            animation: toast-fade 3s forwards;
+        }
+        @keyframes toast-fade {
+            0% { opacity: 0; transform: translateY(20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="bg-gray-50">
+      <!-- Navigation -->
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-color shadow-lg z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-2 cursor-pointer" onclick="showPage('home')">
+                      <img onclick="location.href='homepage.html'" src="WechatIMG101.jpg" alt="logo" class="w-20 h-10 rounded-full object-cover mr-0"/>
+                      <span onclick="location.href='homepage.html'" class="text-xl font-bold text-gray-800">PawTrax</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    
+                    <!-- Products Dropdown -->
+                        <div class="relative" onmouseenter="showDropdown('products')" onmouseleave="hideDropdown('products')">
+                            <button class="flex items-center space-x-1 px-3 py-2 text-l font-medium text-gray-700 hover:text-orange-600 transition-colors">
+                                <span>Products</span>
+                                <svg id="products-chevron" class="w-4 h-4 nav-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="products-dropdown" class="dropdown absolute top-full left-0 mt-1 w-80 bg-white rounded-lg shadow-xl border border-gray-100 py-2">
+                                <a href="product.html" class="block px-4 py-3 hover:bg-gray-50 transition-colors group">
+                                    <h4 class="text-l font-semibold text-gray-800 group-hover:text-orange-600">Core Product</h4>
+                                    <p class="text-base text-gray-500 mt-1">Main tracking devices</p>
+                                </a>
+                                <a href="product.html" class="block px-4 py-3 hover:bg-gray-50 transition-colors group">
+                                    <h4 class="text-l font-semibold text-gray-800 group-hover:text-orange-600">Subscription</h4>
+                                    <p class="text-base text-gray-500 mt-1">Service plans & renewals</p>
+                                </a>
+                                <a href="product.html" class="block px-4 py-3 hover:bg-gray-50 transition-colors group">
+                                    <h4 class="text-l font-semibold text-gray-800 group-hover:text-orange-600">Accessories</h4>
+                                    <p class="text-base text-gray-500 mt-1">Collars, chargers & more</p>
+                                </a>
+                            </div>
+                        </div>
+   
+                    <!-- Compare Link -->
+                        <a href="compare.html" class="px-3 py-2 text-l font-medium text-gray-700 hover:text-orange-600 transition-colors">Compare</a>
+    
+                    <!-- How it Works Link -->
+                        <a href="How-it-works.html" class="px-3 py-2 text-l font-medium text-gray-700 hover:text-orange-600 transition-colors">How it Works</a>
+                    
+                    <!-- About us Link -->
+                        <a href="about-us.html" class="px-3 py-2 text-l font-medium text-gray-700 hover:text-orange-600 transition-colors">About us</a>
+                    
+                    <!-- Support Dropdown -->
+                    <div class="relative" onmouseenter="showDropdown('resources')" onmouseleave="hideDropdown('resources')">
+                        <button class="flex items-center space-x-1 px-3 py-2 text-l font-medium text-gray-700 hover:text-orange-600 transition-colors">
+                            <span>Support</span>
+                            <svg id="resources-chevron" class="w-4 h-4 nav-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div id="resources-dropdown" class="dropdown absolute top-full left-0 mt-1 w-80 bg-white rounded-lg shadow-xl border border-gray-100 py-2">
+                            <a href="FAQ.html" class="block px-4 py-3 hover:bg-gray-50 transition-colors group">
+                                <h4 class="text-l font-semibold text-gray-800 group-hover:text-orange-600">FAQ</h4>
+                                <p class="text-base text-gray-500 mt-1">Common questions</p>
+                            </a>
+                            <a href="Delivery-information.html" class="block px-4 py-3 hover:bg-gray-50 transition-colors group">
+                                <h4 class="text-l font-semibold text-gray-800 group-hover:text-orange-600">Delivery Information</h4>
+                                <p class="text-base text-gray-500 mt-1">Shipping & Tracking</p>
+                            </a>
+                        </div>
+                    </div>
+
+                <!-- Desktop Actions -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <button class="relative p-2 text-gray-700 hover:text-orange-600 transition-colors" id="cart-icon">
+                        <i class="fas fa-shopping-cart w-4 h-4"></i>
+                        <span class="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </button>
+                    <a href="#" class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-user w-4 h-4"></i>
+                        <span class="text-l font-semibold">Login</span>
+                    </a>
+                </div>
+                </div>
+           </div>
+        </div>
+    </nav>
+    
+    <!-- Login Section -->
+    <main class="login-container pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="max-w-md mx-auto">
+                <!-- Your login/signup form -->
+                <div class="auth-form w-full">
+                    <!-- Login/Signup Tabs -->
+                    <div class="flex border-b">
+                        <button id="login-tab" class="flex-1 py-4 font-medium tab-active">Login</button>
+                        <button id="signup-tab" class="flex-1 py-4 font-medium text-gray-500">Sign Up</button>
+                    </div>
+                    
+                    <!-- Login Form -->
+                    <div id="login-form" class="p-8">
+                        <h1 class="text-2xl font-bold text-center mb-6">Welcome Back</h1>
+                        
+                        <!-- Social Login -->
+                        <div class="space-y-3 mb-6">
+                            <button class="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:border-accent hover:text-accent transition">
+                                <i class="fab fa-google mr-2"></i> Continue with Google
+                            </button>
+                            <button class="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:border-accent hover:text-accent transition">
+                                <i class="fab fa-facebook-f mr-2"></i> Continue with Facebook
+                            </button>
+                        </div>
+                        
+                        <div class="relative mb-6">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-300"></div>
+                            </div>
+                            <div class="relative flex justify-center">
+                                <span class="px-2 bg-white text-gray-500">or continue with email</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Login Form Content -->
+                        <form class="space-y-4">
+                            <div>
+                                <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+                                <input type="email" id="login-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent">
+                            </div>
+                            
+                            <div>
+                                <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                <input type="password" id="login-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent">
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <input id="remember-me" type="checkbox" class="h-4 w-4 text-accent focus:ring-accent border-gray-300 rounded">
+                                    <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                                </div>
+                                
+                                <a href="#" class="text-sm text-accent hover:underline">Forgot password?</a>
+                            </div>
+                            
+                            <button type="submit" class="w-full btn-primary py-3 px-4 rounded-lg font-medium hover:shadow-md transition">
+                                Log In
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Signup Form (Hidden by default) -->
+                    <div id="signup-form" class="p-8 hidden">
+                        <h1 class="text-2xl font-bold text-center mb-6">Create Account</h1>
+                        
+                        <!-- Signup Form Content -->
+                        <form class="space-y-4">
+                            <div>
+                                <label for="signup-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                <input type="text" id="signup-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent">
+                            </div>
+                            
+                            <div>
+                                <label for="signup-email" class="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+                                <input type="email" id="signup-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent">
+                            </div>
+                            
+                            <div>
+                                <label for="signup-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                <input type="password" id="signup-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent">
+                            </div>
+                            
+                            <div>
+                                <label for="signup-confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                                <input type="password" id="signup-confirm-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent">
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <input id="terms" type="checkbox" class="h-4 w-4 text-accent focus:ring-accent border-gray-300 rounded">
+                                <label for="terms" class="ml-2 block text-sm text-gray-700">
+                                    I agree to the <a href="#" class="text-accent hover:underline">Terms of Service</a> and <a href="#" class="text-accent hover:underline">Privacy Policy</a>
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="w-full btn-primary py-3 px-4 rounded-lg font-medium hover:shadow-md transition">
+                                Sign Up
+                            </button>
+                        </form>
+                        
+                        <div class="mt-4 text-center text-sm text-gray-600">
+                            Already have an account? <a href="#" id="switch-to-login" class="text-accent font-medium hover:underline">Log In</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Features Footer -->
+                    <div class="bg-gray-50 p-4 flex justify-around text-center text-xs text-gray-600 border-t border-gray-200">
+                        <div class="px-2">
+                            <i class="fas fa-shield-alt text-accent block text-xl mb-1"></i>
+                            Secure
+                        </div>
+                        <div class="px-2">
+                            <i class="fas fa-paw text-accent block text-xl mb-1"></i>
+                            Pet-Friendly
+                        </div>
+                        <div class="px-2">
+                            <i class="fas fa-crown text-accent block text-xl mb-1"></i>
+                            Premium
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white pt-14 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <img src="WechatIMG101.jpg" alt="logo" class="w-20 h-10 rounded-full object-cover mr-0"/>
+                        <span class="text-xl font-bold">PawTrax</span>
+                    </div>
+                    <p class="text-gray-300 mb-6">
+                        Guard the Safety and Health for your furry friends through our brilliant product. 
+                        Your pet's wellness journey starts here
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-lucide="facebook" class="w-6 h-6"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-lucide="twitter" class="w-6 h-6"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-lucide="instagram" class="w-6 h-6"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Quick Links</h3>
+                    <div class="space-y-3">
+                        <a href=product.html class="block text-gray-300 hover:text-white transition-colors">Products</a>
+                        <a href=compare.html class="block text-gray-300 hover:text-white transition-colors">Compare</a>
+                        <a href=How-it-works.html class="block text-gray-300 hover:text-white transition-colors">How it Works</a>
+                        <a href="FAQ.html" class="block text-gray-300 hover:text-white transition-colors">Support</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Contact Info</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 accent-color" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                            <span class="text-gray-300">+852 (666) 123-4567</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 accent-color" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="text-gray-300">info@pawtrax.com</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 accent-color" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span class="text-gray-300">123 Paw Trax Street<br>Kowloon HK</span>
+                        </div>
+                        <div class="mt-6">
+                        <h4 class="text-sm font-semibold mb-2">Emergency Hours</h4>
+                        <p class="text-gray-300 text-sm">
+                            24/7 Emergency advice Available<br>
+                            Call: +852 (666) 911-PETS
+                        </p>
+                        </div>
+                    </div>
+                </div>
+                    
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Legal</h3>
+                    <div class="space-y-1">
+                        <a href="#privacy" class="block text-gray-300 hover:text-white transition-colors">Privacy Policy</a>
+                        <a href="#terms" class="block text-gray-300 hover:text-white transition-colors">Terms of Service</a>
+                        <a href="#cookies" class="block text-gray-300 hover:text-white transition-colors">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center">
+                <p class="text-gray-400">
+                    © 2025 PawTrax. All rights reserved.
+                </p>
+            </div>
+         </div>
+    </footer>
+
+    <!-- 购物车弹窗容器 -->
+    <div id="cart-modal" class="hidden fixed inset-0 z-50 overflow-hidden">
+        <!-- 半透明遮罩层 -->
+        <div class="absolute inset-0 bg-black bg-opacity-50" id="cart-backdrop"></div>
+
+        <!-- 购物车侧边栏 -->
+        <div class="absolute inset-y-0 right-0 max-w-full flex">
+            <div class="relative w-screen max-w-md">
+                <!-- 购物车内容区 -->
+                <div class="h-full flex flex-col bg-white shadow-xl">
+                    <!-- 购物车头部 -->
+                    <div class="flex-1 py-6 overflow-y-auto px-4 sm:px-6">
+                        <div class="flex items-start justify-between">
+                            <h2 class="text-lg font-medium text-gray-900">Shopping Cart</h2>
+                            <!-- 关闭按钮 -->
+                            <button id="close-cart" class="p-2 text-gray-400 hover:text-gray-500">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <!-- 商品列表容器 -->
+                        <div class="mt-8">
+                            <div id="cart-items" class="flow-root">
+                                <!-- 默认显示空购物车提示 -->
+                                <p class="text-gray-500 text-center py-8">Your cart is empty</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 购物车底部结算区 -->
+                    <div class="border-t border-gray-200 py-6 px-4 sm:px-6">
+                        <div class="flex justify-between text-base font-medium text-gray-900">
+                            <p>Subtotal</p>
+                            <!-- 总价显示 -->
+                            <p id="cart-total">$0.00</p>
+                        </div>
+                        <p class="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout</p>
+                        <!-- 结算按钮 -->
+                        <button id="checkout-btn" class="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-medium transition-colors">
+                            Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 在购物车模态框后面添加 -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    <script>
+        // Navigation dropdown functionality
+        function showDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId + '-dropdown');
+            const chevron = document.getElementById(dropdownId + '-chevron');
+            if (dropdown) {
+                dropdown.classList.add('show');
+                chevron.classList.add('rotate');
+            }
+        }
+
+        function hideDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId + '-dropdown');
+            const chevron = document.getElementById(dropdownId + '-chevron');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+                chevron.classList.remove('rotate');
+            }
+        }
+
+        // Toggle between Login and Signup forms
+        document.getElementById('login-tab').addEventListener('click', function() {
+            document.getElementById('login-tab').classList.add('tab-active');
+            document.getElementById('login-tab').classList.remove('text-gray-500');
+            document.getElementById('signup-tab').classList.remove('tab-active');
+            document.getElementById('signup-tab').classList.add('text-gray-500');
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+        });
+        
+        document.getElementById('signup-tab').addEventListener('click', function() {
+            document.getElementById('signup-tab').classList.add('tab-active');
+            document.getElementById('signup-tab').classList.remove('text-gray-500');
+            document.getElementById('login-tab').classList.remove('tab-active');
+            document.getElementById('login-tab').classList.add('text-gray-500');
+            document.getElementById('signup-form').classList.remove('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+        });
+        
+        document.getElementById('switch-to-login').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('login-tab').click();
+        });
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // ====== 购物车持久化功能 ======
+        // 获取或初始化购物车数据
+        function getCartData() {
+            const cartData = localStorage.getItem('pawtrax_cart');
+            return cartData ? JSON.parse(cartData) : {
+                items: [],
+                total: 0
+            };
+        }
+
+        // 保存购物车数据到localStorage
+        function saveCartData(cart) {
+            localStorage.setItem('pawtrax_cart', JSON.stringify(cart));
+        }
+
+        // 添加到购物车函数
+        function addToCart() {
+            const productId = this.dataset.productId;
+            const productName = this.dataset.productName;
+            const productPrice = parseFloat(this.dataset.productPrice);
+
+            // 从localStorage获取当前购物车数据
+            let cart = getCartData();
+            
+            // 检查是否已存在相同商品
+            const existingItem = cart.items.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.items.push({
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    quantity: 1
+                });
+            }
+
+            cart.total += productPrice;
+            
+            // 保存更新后的购物车数据
+            saveCartData(cart);
+            
+            // 更新UI
+            updateCartUI(cart);
+
+            // 按钮反馈效果
+            this.textContent = 'Added!';
+            this.classList.remove('bg-orange-500', 'hover:bg-orange-600');
+            this.classList.add('bg-amber-600', 'hover:bg-amber-700');
+
+            // 显示Toast通知
+            showToast(`${productName} added to cart`);
+
+            // 1秒后恢复按钮状态
+            const button = this;
+            setTimeout(() => {
+                button.textContent = 'Add to Cart';
+                button.classList.remove('bg-amber-600', 'hover:bg-amber-700');
+                button.classList.add('bg-orange-500', 'hover:bg-orange-600');
+            }, 1000);
+        }
+
+        // 更新购物车UI
+        function updateCartUI(cart) {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            const cartCount = document.querySelector('#cart-icon .absolute');
+
+            cartItemsContainer.innerHTML = '';
+
+            if (cart.items.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-8">Your cart is empty</p>';
+            } else {
+                cart.items.forEach(item => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'flex py-4 border-b border-gray-200';
+                    cartItem.innerHTML = `
+                        <div class="ml-4 flex-1">
+                            <div class="flex justify-between">
+                                <h3 class="text-gray-900">${item.name}</h3>
+                                <p class="ml-4 text-gray-900">$${(item.price * item.quantity).toFixed(2)}</p>
+                            </div>
+                            <div class="flex items-center mt-2">
+                                <button class="quantity-btn px-2" data-action="decrease" data-id="${item.id}">-</button>
+                                <span class="mx-2">${item.quantity}</span>
+                                <button class="quantity-btn px-2" data-action="increase" data-id="${item.id}">+</button>
+                                <button class="remove-btn text-red-500 ml-4" data-id="${item.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(cartItem);
+                });
+            }
+
+            // 更新总价和数量
+            cartTotal.textContent = `$${cart.total.toFixed(2)}`;
+            if (cartCount) {
+                cartCount.textContent = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+            }
+        }
+
+        // 显示Toast通知
+        function showToast(message) {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast bg-amber-200 text-amber-800 px-4 py-2 rounded-lg shadow-lg border border-amber-300';
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // 切换购物车显示/隐藏
+        function toggleCart() {
+            const cartModal = document.getElementById('cart-modal');
+            cartModal.classList.toggle('hidden');
+            document.body.style.overflow = cartModal.classList.contains('hidden') ? 'auto' : 'hidden';
+        }
+
+        // 初始化事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从localStorage加载购物车数据并更新UI
+            const cart = getCartData();
+            updateCartUI(cart);
+            
+            // 购物车图标点击
+            if (document.getElementById('cart-icon')) {
+                document.getElementById('cart-icon').addEventListener('click', toggleCart);
+            }
+
+            // 关闭购物车按钮
+            if (document.getElementById('close-cart')) {
+                document.getElementById('close-cart').addEventListener('click', toggleCart);
+            }
+
+            // 遮罩层点击关闭
+            if (document.getElementById('cart-backdrop')) {
+                document.getElementById('cart-backdrop').addEventListener('click', toggleCart);
+            }
+
+            // 添加购物车按钮事件委托
+            document.body.addEventListener('click', function(e) {
+                if (e.target.classList.contains('add-to-cart')) {
+                    addToCart.call(e.target);
+                }
+
+                // 处理购物车内的数量按钮
+                if (e.target.classList.contains('quantity-btn')) {
+                    const action = e.target.dataset.action;
+                    const productId = e.target.dataset.id;
+                    
+                    // 从localStorage获取当前购物车数据
+                    let cart = getCartData();
+                    const item = cart.items.find(item => item.id === productId);
+
+                    if (item) {
+                        if (action === 'increase') {
+                            item.quantity += 1;
+                            cart.total += item.price;
+                        } else if (action === 'decrease' && item.quantity > 1) {
+                            item.quantity -= 1;
+                            cart.total -= item.price;
+                        }
+                        
+                        // 保存更新后的购物车数据
+                        saveCartData(cart);
+                        
+                        // 更新UI
+                        updateCartUI(cart);
+                    }
+                }
+
+                // 处理删除按钮
+                if (e.target.classList.contains('remove-btn') || e.target.closest('.remove-btn')) {
+                    const btn = e.target.classList.contains('remove-btn') ? 
+                              e.target : e.target.closest('.remove-btn');
+                    const productId = btn.dataset.id;
+                    
+                    // 从localStorage获取当前购物车数据
+                    let cart = getCartData();
+                    const index = cart.items.findIndex(item => item.id === productId);
+
+                    if (index !== -1) {
+                        const item = cart.items[index];
+                        cart.total -= item.price * item.quantity;
+                        cart.items.splice(index, 1);
+                        
+                        // 保存更新后的购物车数据
+                        saveCartData(cart);
+                        
+                        // 更新UI
+                        updateCartUI(cart);
+                    }
+                }
+            });
+
+            // 结账按钮
+            if (document.getElementById('checkout-btn')) {
+                document.getElementById('checkout-btn').addEventListener('click', function() {
+                    const cart = getCartData();
+                    if (cart.items.length === 0) {
+                        showToast('Your cart is empty!');
+                        return;
+                    }
+                    alert('Proceeding to checkout! Total: $' + cart.total.toFixed(2));
+                });
+            }
+        });
+    </script>
+</body>
+</html>

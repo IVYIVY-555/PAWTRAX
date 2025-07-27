@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawTrax - Products</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #FF7F50 100%, #dd6236 200%, #8f1e00 300%);
+        }
+        .bg-color {
+            background: #F7EEDD;
+        }
+        .bg-200 {
+            background: #c4bcab;
+        }
+        .text-color {
+            color:#000000;
+        }
+        .accent-color {
+            color:#8B4513;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .footer-links p {
+            margin-bottom: 5px; /* Adjust this value to control spacing */
+            line-height: 1.3;   /* Optional: adjust line height if needed */
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #FF7F50;
+        }
+        .hero-overlay {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .dropdown {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        .dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .faq-answer.open {
+            max-height: 200px;
+            transition: max-height 0.3s ease-in;
+        }
+        .chevron {
+            transition: transform 0.3s ease;
+        }
+        .chevron.rotate {
+            transform: rotate(180deg);
+        }
+        .nav-chevron {
+            transition: transform 0.2s ease;
+        }
+        .nav-chevron.rotate {
+            transform: rotate(180deg);
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .product-card {
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        /* 核心产品专用布局 */
+        .core-product-container {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: stretch;
+          gap: 40px;
+        }
+
+        .core-product-card {
+          flex: 0 0 calc(50% - 40px);
+          min-width: 320px;
+          max-width: 480px;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .core-product-card:hover {
+          transform: translateY(-10px) scale(1.02);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+          .core-product-container {
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .core-product-card {
+            flex: 0 0 100%;
+            max-width: 100%;
+          }
+        }
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .spec-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e2e2;
+        }
+        .spec-table tr:last-child td {
+            border-bottom: none;
+        }
+        .spec-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .feature-badge {
+            display: inline-block;
+            background-color: #FF7F50;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        /* 新增购物车持久化相关样式 */
+        .cart-item {
+            display: flex;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .quantity-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .remove-btn {
+            color: #ef4444;
+            margin-left: 1rem;
+            cursor: pointer;
+        }
+        .btn-press:active {
+            transform: scale(0.98);
+        }
+        .toast {
+            animation: toast-fade 3s forwards;
+        }
+        @keyframes toast-fade {
+            0% { opacity: 0; transform: translateY(20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="bg-gray-50">
+        <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-color shadow-lg z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-2 cursor-pointer" onclick="showPage('home')">
+                      <img onclick="location.href='homepage.html'" src="WechatIMG101.jpg" alt="logo" class="w-20 h-10 rounded-full object-cover mr-0"/>
+                      <span onclick="location.href='homepage.html'" class="text-xl font-bold text-gray-800">PawTrax</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    
+                    <!-- Products Dropdown -->
+                        <div class="relative" onmouseenter="showDropdown('products')" onmouseleave="hideDropdown('products')">
+                            <button class="flex items-center space-x-1 px-3 py-2 text-l font-medium text-orange-600 border-b-2 border-orange-600">
+                                <span>Products</span>
+                                <svg id="products-chevron" class="w-4 h-4 nav-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="products-dropdown" class="dropdown absolute top-full left-0 mt-1 w-80 bg-white rounded-lg shadow-xl border border-gray-100 py-2">
+                                <a href="product.html" class="block px-4 py-3 hover:bg-gray-50 transition-colors group">
+                                    <h4 class="text-l font-semibold text-gray-800 group-hover:text-orange-600">Core Product</h4>
+                                    <p class="text-base text-gray-500 mt-1">Main tracking devices</p>
+                                </a>
+                                <a href="product.html" class="block px-4 py-3 hover:bg-gray-50 transition-colors group">
+                                    <h4 class="text-l font-semibold text-gray-800 group-hover:text-orange-600">Subscription</h4>
+                                    <p class="text-base text-gray-500 mt-1">Service plans & renewals</p>
+                                </a>
+                                <a href="product.html" class="block px-4 py-3 hover:bg-gray-50 transition-colors group">
+                                    <h4 class="text-l font-semibold text-gray-800 group-hover:text-orange-600">Accessories</h4>
+                                    <p class="text-base text-gray-500 mt-1">Collars, chargers & more</p>
+                                </a>
+                            </div>
+                        </div>
+   
+                    <!-- Compare Link -->
+                        <a href="compare.html" class="px-3 py-2 text-l font-medium text-gray-700 hover:text-orange-600 transition-colors">Compare</a>
+    
+                    <!-- How it Works Link -->
+                        <a href="How-it-works.html" class="px-3 py-2 text-l font-medium text-gray-700 hover:text-orange-600 transition-colors">How it Works</a>
+                    <!-- About us Link -->
+                        <a href="about-us.html" class="px-3 py-2 text-l font-medium text-gray-700 hover:text-orange-600 transition-colors">About us</a>
+                    <!-- Support Dropdown -->
+                    <div class="relative" onmouseenter="showDropdown('resources')" onmouseleave="hideDropdown('resources')">
+                        <button class="flex items-center space-x-1 px-3 py-2 text-l font-medium text-gray-700 hover:text-orange-600 transition-colors">
+                            <span>Support</span>
+                            <svg id="resources-chevron" class="w-4 h-4 nav-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div id="resources-dropdown" class="dropdown absolute top-full left-0 mt-1 w-80 bg-white rounded-lg shadow-xl border border-gray-100 py-2">
+                            <a href="FAQ.html" class="block px-4 py-3 hover:bg-gray-50 transition-colors group">
+                                <h4 class="text-l font-semibold text-gray-800 group-hover:text-orange-600">FAQ</h4>
+                                <p class="text-base text-gray-500 mt-1">Common questions</p>
+                            </a>
+                            <a href="Delivery-information.html" class="block px-4 py-3 hover:bg-gray-50 transition-colors group">
+                                <h4 class="text-l font-semibold text-gray-800 group-hover:text-orange-600">Delivery Information</h4>
+                                <p class="text-base text-gray-500 mt-1">Shipping & Tracking</p>
+                            </a>
+                        </div>
+                    </div>
+
+                <!-- Desktop Actions -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <button class="relative p-2 text-gray-700 hover:text-orange-600 transition-colors" id="cart-icon">
+                        <i class="fas fa-shopping-cart w-4 h-4"></i>
+                        <span class="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </button>
+                    <!-- Login链接 -->
+                    <a href="Login.html" class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-user w-4 h-4"></i>
+                        <span class="text-l font-semibold">Login</span>
+                    </a>
+                </div>
+                </div>
+           </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- Products Page -->
+        <div id="products" class="page active">
+            <!-- Hero Section -->
+            <section class="relative bg-gradient-to-r from-teal-600 to-teal-400 text-white py-32 bg-cover bg-center bg-no-repeat" style="background-image:url('compare-hero.png');">
+                <div class="hero-overlay absolute inset-0"></div>
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center">
+                        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                            PawTrax Products
+                        </h1>
+                        <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                            Discover our range of innovative pet tracking solutions and accessories
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 修改后的Core Product区域 -->
+            <section id="core-product" class="py-16 bg-color">
+              <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                  <h2 class="text-3xl font-bold text-gray-800 mb-4">Core Products</h2>
+                  <p class="text-xl text-gray-600">Advanced tracking solutions for your beloved pets</p>
+                </div>
+                    
+                    <!-- 添加核心产品专用容器 -->
+                <div class="flex justify-center">
+                  <div class="core-product-container flex flex-wrap justify-center gap-8 max-w-5xl">
+                    <!-- Pawtrax Lite -->
+                    <div class="core-product-card bg-white rounded-xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02]">
+                            <div class="p-6">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-gray-800 mb-2">Pawtrax Lite Tracker</h3>
+                                        <p class="text-sm text-gray-600 mb-4">For cats and small dogs</p>
+                                    </div>
+                                    <span class="bg-orange-100 text-orange-800 py-1 px-3 rounded-full text-sm font-bold">£59.99</span>
+                                </div>
+                                
+                                <div class="mb-5">
+                                    <img src="cat-tracker-v1.png" alt="Pawtrax Lite" class="w-full h-48 object-contain rounded-lg">
+                                </div>
+                                
+                                <div class="mb-5">
+                                    <h4 class="font-semibold mb-3">Key Features:</h4>
+                                    <div class="flex flex-wrap mb-4">
+                                        <span class="feature-badge">Real-time Tracking</span>
+                                        <span class="feature-badge">Activity Monitoring</span>
+                                        <span class="feature-badge">Safe Zone Alerts</span>
+                                        <span class="feature-badge">Waterproof</span>
+                                        <span class="feature-badge">Family Sharing</span>
+                                    </div>
+                                </div>
+                                
+                                <table class="spec-table mb-6">
+                                    <tr>
+                                        <td class="font-medium">Dimensions</td>
+                                        <td>1.63" x 0.98" x 0.54"</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium">Weight</td>
+                                        <td>17.6g</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium">Battery Life</td>
+                                        <td>Up to 3 days</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium">Network</td>
+                                        <td>4G LTE, Bluetooth</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium">Waterproof</td>
+                                        <td>IP67 Rating</td>
+                                    </tr>
+                                </table>
+                                
+                                <button class="gradient-bg text-white w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            onclick="location.href='pawtrax-lite.html'">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Pawtrax Standard -->
+                        <div class="core-product-card bg-white rounded-xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02]">
+                            <div class="p-6">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-gray-800 mb-2">Pawtrax Standard Tracker</h3>
+                                        <p class="text-sm text-gray-600 mb-4">For dogs over 3.5kg</p>
+                                    </div>
+                                    <span class="bg-orange-100 text-orange-800 py-1 px-3 rounded-full text-sm font-bold">£79.99</span>
+                                </div>
+                                
+                                <div class="mb-5">
+                                    <img src="dog_tracker_%E8%9B%8B%E4%BB%94.jpg" alt="Pawtrax Standard" class="w-full h-48 object-contain rounded-lg">
+                                </div>
+                                
+                                <div class="mb-5">
+                                    <h4 class="font-semibold mb-3">Key Features:</h4>
+                                    <div class="flex flex-wrap mb-4">
+                                        <span class="feature-badge">Audio Recognition</span>
+                                        <span class="feature-badge">Temperature Alerts</span>
+                                        <span class="feature-badge">All Lite Features</span>
+                                        <span class="feature-badge">Wi-Fi Support</span>
+                                        <span class="feature-badge">Extended Battery</span>
+                                    </div>
+                                </div>
+                                
+                                <table class="spec-table mb-6">
+                                    <tr>
+                                        <td class="font-medium">Dimensions</td>
+                                        <td>1.89" x 1.3" x 0.55"</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium">Weight</td>
+                                        <td>27g</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium">Battery Life</td>
+                                        <td>Up to 8 days</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium">Network</td>
+                                        <td>4G LTE, Bluetooth, Wi-Fi</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium">Waterproof</td>
+                                        <td>IP67 Rating</td>
+                                    </tr>
+                                </table>
+                                
+                                <button class="gradient-bg text-white w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            onclick="location.href='pawtrax-standard.html'">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </section>
+            
+            <!-- Subscription Section -->
+            <section id="subscription" class="py-16 bg-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Subscription Plans</h2>
+                        <p class="text-xl text-gray-600">Unlock the full potential of your Pawtrax tracker</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Basic Subscription -->
+                        <div class="bg-white rounded-xl shadow-lg p-8">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-2">Basic Subscription</h3>
+                                <div class="text-4xl font-bold accent-color mb-4">£49.99<span class="text-base font-normal text-gray-600">/year</span></div>
+                                <p class="text-gray-600">Essential features for peace of mind</p>
+                            </div>
+                            
+                            <div class="mb-8">
+                                <h4 class="font-semibold mb-4 text-lg">Core Services:</h4>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>Real-time location updates (every 30 seconds)</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>Safe zone settings (up to 5)</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>Cloud storage for activity data (1 year)</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>Basic feature unlock</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="mb-8">
+                                <h4 class="font-semibold mb-4 text-lg">Additional Benefits:</h4>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>Customer service support on weekdays (9AM-6PM)</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>10% off on accessory purchases</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Basic Subscription 修复 -->
+                            <button class="add-to-cart gradient-bg text-white w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity flex items-center justify-center"
+                                    data-product-id="subscription-basic"
+                                    data-product-name="Basic Subscription"
+                                    data-product-price="49.99">
+                                Select Basic Plan
+                            </button>
+                        </div>
+                        
+                        <!-- Premium Subscription -->
+                        <div class="bg-white rounded-xl shadow-lg p-8 border-4 border-orange-500 relative">
+                            <div class="absolute top-0 right-0 bg-orange-500 text-white px-4 py-1 rounded-bl-lg font-semibold">
+                                Most Popular
+                            </div>
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-2">Premium Subscription</h3>
+                                <div class="text-4xl font-bold accent-color mb-4">£59.99<span class="text-base font-normal text-gray-600">/year</span></div>
+                                <p class="text-gray-600">Full suite of features for ultimate protection</p>
+                            </div>
+                            
+                            <div class="mb-8">
+                                <h4 class="font-semibold mb-4 text-lg">Core Services:</h4>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>Real-time location updates (every 10 seconds)</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>Unlimited safe zone settings</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>Permanent cloud storage for activity data</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>Full feature unlock (audio recognition, temp alerts)</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="mb-8">
+                                <h4 class="font-semibold mb-4 text-lg">Additional Benefits:</h4>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>24-hour dedicated customer service</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>One free device check service per year</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                        <span>20% off on accessory purchases</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Premiun Subscription 修复 -->
+                            <button class="add-to-cart gradient-bg text-white w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity flex items-center justify-center"
+                                    data-product-id="subscription-premium"
+                                    data-product-name="Premium Subscription"
+                                    data-product-price="59.99">
+                                Select Premium Plan
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12 bg-gradient-to-r from-teal-50 to-orange-50 rounded-2xl p-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Subscription Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-semibold mb-3">Activation Method</h4>
+                                <p class="text-gray-600">After purchase, enter the e-card redemption code through the Pawtrax APP and follow the instructions to complete the binding.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-3">Renewal Rules</h4>
+                                <p class="text-gray-600">Automatic renewal 7 days before the subscription expires, with the option to cancel in the APP beforehand.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-3">Device Support</h4>
+                                <p class="text-gray-600">One subscription e-card can be linked to one Pawtrax locator; multiple devices require separate subscriptions.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-3">Region Support</h4>
+                                <p class="text-gray-600">UK, Europe, Middle East, Hong Kong, Southeast Asia</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Accessories Section -->
+            <section id="accessories" class="py-16 bg-color">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Accessories</h2>
+                        <p class="text-xl text-gray-600">Enhance your Pawtrax experience with our premium accessories</p>
+                    </div>
+                    
+                    <div class="product-grid">
+                        <!-- Collar -->
+                        <div class="product-card bg-white">
+                            <div class="p-6">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-gray-800 mb-2">Pawtrax Collar</h3>
+                                        <p class="text-sm text-gray-600 mb-4">Customizable for cats and dogs</p>
+                                    </div>
+                                    <span class="bg-orange-100 text-orange-800 py-1 px-3 rounded-full text-sm font-bold">£15.99</span>
+                                </div>
+                                
+                                <div class="mb-5">
+                                    <img src="%E9%A1%B9%E5%9C%88%E9%85%8D%E4%BB%B6.png" alt="Pawtrax Collar" class="w-full h-48 object-contain rounded-lg">
+                                </div>
+                                
+                                <div class="mb-5">
+                                    <h4 class="font-semibold mb-3">Features:</h4>
+                                    <ul class="space-y-2 text-gray-600">
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>Built-in tracker fixing mechanism</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>Skin-friendly nylon fabric</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>Adjustable neck circumference (18-40cm)</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>12 color choices with laser engraving</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>Elastic buffering for safety</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <!-- Pawtrax Collar 修复 -->
+                                <button class="add-to-cart gradient-bg text-white w-full py-4 rounded-xl font-semibold hover:opacity-90 transition-opacity flex items-center justify-center"
+                                        data-product-id="pawtrax-collar"
+                                        data-product-name="Pawtrax Collar"
+                                        data-product-price="16.00">
+                                    <i class="fas fa-shopping-cart mr-3"></i>
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Harness -->
+                        <div class="product-card bg-white">
+                            <div class="p-6">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-gray-800 mb-2">Pawtrax Harness</h3>
+                                        <p class="text-sm text-gray-600 mb-4">For active pets (5-30kg)</p>
+                                    </div>
+                                    <span class="bg-orange-100 text-orange-800 py-1 px-3 rounded-full text-sm font-bold">£28.99</span>
+                                </div>
+                                
+                                <div class="mb-5">
+                                    <img src="%E5%8F%AF%E5%AE%9A%E5%88%B6%E8%83%8C%E5%B8%A6.png" alt="Pawtrax Harness" class="w-full h-48 object-contain rounded-lg">
+                                </div>
+                                
+                                <div class="mb-5">
+                                    <h4 class="font-semibold mb-3">Features:</h4>
+                                    <ul class="space-y-2 text-gray-600">
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>Chest harness structure for secure connection</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>High-strength Oxford fabric + breathable mesh</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>Available in S/M/L sizes</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>8 pattern customizations with embroidery</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>Three-point adjustment buckle for comfort</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <!-- Pawtrax Harness 修复 -->
+                                <button class="add-to-cart gradient-bg text-white w-full py-4 rounded-xl font-semibold hover:opacity-90 transition-opacity flex items-center justify-center"
+                                        data-product-id="pawtrax-harness"
+                                        data-product-name="Pawtrax Harness"
+                                        data-product-price="29.00">
+                                    <i class="fas fa-shopping-cart mr-3"></i>
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Charging Dock -->
+                        <div class="product-card bg-white">
+                            <div class="p-6">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-gray-800 mb-2">Charging Dock & Cable</h3>
+                                        <p class="text-sm text-gray-600 mb-4">For all Pawtrax models</p>
+                                    </div>
+                                    <span class="bg-orange-100 text-orange-800 py-1 px-3 rounded-full text-sm font-bold">£7.99</span>
+                                </div>
+                                
+                                <div class="mb-5">
+                                    <img src="charge-wire.png" alt="Charging Dock" class="w-full h-48 object-contain rounded-lg">
+                                </div>
+                                
+                                <div class="mb-5">
+                                    <h4 class="font-semibold mb-3">Features:</h4>
+                                    <ul class="space-y-2 text-gray-600">
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>Compatible with all Pawtrax models</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>5V/2.1A main power supply</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>Charges from 0% to 100% in 2 hours</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>Non-slip silicone pads for stability</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-orange-500 mt-1 mr-2"></i>
+                                            <span>Built-in overcharge protection</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <!-- Charging Dock & Cable 修复 -->
+                                <button class="add-to-cart gradient-bg text-white w-full py-4 rounded-xl font-semibold hover:opacity-90 transition-opacity flex items-center justify-center"
+                                        data-product-id="charging-dock"
+                                        data-product-name="Charging Dock & Cable"
+                                        data-product-price="7.99">
+                                    <i class="fas fa-shopping-cart mr-3"></i>
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer class="bg-gray-800 text-white pt-14 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <img src="WechatIMG101.jpg" alt="logo" class="w-20 h-10 rounded-full object-cover mr-0"/>
+                        <span class="text-xl font-bold">PawTrax</span>
+                    </div>
+                    <p class="text-gray-300 mb-6">
+                        Guard the Safety and Health for your furry friends through our brilliant product. 
+                        Your pet's wellness journey starts here
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook w-6 h-6"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter w-6 h-6"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram w-6 h-6"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Quick Links</h3>
+                    <div class="space-y-3">
+                        <a href=product.html class="block text-gray-300 hover:text-white transition-colors">Products</a>
+                        <a href=compare.html class="block text-gray-300 hover:text-white transition-colors">Compare</a>
+                        <a href=How-it-works.html class="block text-gray-300 hover:text-white transition-colors">How it Works</a>
+                        <a href="FAQ.html" class="block text-gray-300 hover:text-white transition-colors">Support</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Contact Info</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 accent-color" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                            <span class="text-gray-300">+852 (666) 123-4567</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 accent-color" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="text-gray-300">info@pawtrax.com</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 accent-color" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span class="text-gray-300">123 Paw Trax Street<br>Kowloon HK</span>
+                        </div>
+                        <div class="mt-6">
+                        <h4 class="text-sm font-semibold mb-2">Emergency Hours</h4>
+                        <p class="text-gray-300 text-sm">
+                            24/7 Emergency advice Available<br>
+                            Call: +852 (666) 911-PETS
+                        </p>
+                        </div>
+                    </div>
+                </div>
+                    
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Legal</h3>
+                    <div class="space-y-1">
+                        <a href="#privacy" class="block text-gray-300 hover:text-white transition-colors">Privacy Policy</a>
+                        <a href="#terms" class="block text-gray-300 hover:text-white transition-colors">Terms of Service</a>
+                        <a href="#cookies" class="block text-gray-300 hover:text-white transition-colors">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center">
+                <p class="text-gray-400">
+                    © 2025 PawTrax. All rights reserved.
+                </p>
+            </div>
+         </div>
+    </footer>
+    
+    <!-- 购物车弹窗容器 -->
+    <div id="cart-modal" class="hidden fixed inset-0 z-50 overflow-hidden">
+        <!-- 半透明遮罩层 -->
+        <div class="absolute inset-0 bg-black bg-opacity-50" id="cart-backdrop"></div>
+
+        <!-- 购物车侧边栏 -->
+        <div class="absolute inset-y-0 right-0 max-w-full flex">
+            <div class="relative w-screen max-w-md">
+                <!-- 购物车内容区 -->
+                <div class="h-full flex flex-col bg-white shadow-xl">
+                    <!-- 购物车头部 -->
+                    <div class="flex-1 py-6 overflow-y-auto px-4 sm:px-6">
+                        <div class="flex items-start justify-between">
+                            <h2 class="text-lg font-medium text-gray-900">Shopping Cart</h2>
+                            <!-- 关闭按钮 -->
+                            <button id="close-cart" class="p-2 text-gray-400 hover:text-gray-500">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <!-- 商品列表容器 -->
+                        <div class="mt-8">
+                            <div id="cart-items" class="flow-root">
+                                <!-- 默认显示空购物车提示 -->
+                                <p class="text-gray-500 text-center py-8">Your cart is empty</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 购物车底部结算区 -->
+                    <div class="border-t border-gray-200 py-6 px-4 sm:px-6">
+                        <div class="flex justify-between text-base font-medium text-gray-900">
+                            <p>Subtotal</p>
+                            <!-- 总价显示 -->
+                            <p id="cart-total">$0.00</p>
+                        </div>
+                        <p class="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout</p>
+                        <!-- 结算按钮 -->
+                        <button id="checkout-btn" class="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-medium transition-colors">
+                            Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 在购物车模态框后面添加 -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    
+    <script>
+        // Navigation dropdown functionality
+        function showDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId + '-dropdown');
+            const chevron = document.getElementById(dropdownId + '-chevron');
+            if (dropdown) {
+                dropdown.classList.add('show');
+                chevron.classList.add('rotate');
+            }
+        }
+
+        function hideDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId + '-dropdown');
+            const chevron = document.getElementById(dropdownId + '-chevron');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+                chevron.classList.remove('rotate');
+            }
+        }
+
+        // FAQ functionality
+        let openFaq = null;
+
+        function toggleFaq(id) {
+            const answer = document.getElementById(`answer-${id}`);
+            const chevron = document.getElementById(`chevron-${id}`);
+            
+            // Close previously open FAQ
+            if (openFaq && openFaq !== id) {
+                const prevAnswer = document.getElementById(`answer-${openFaq}`);
+                const prevChevron = document.getElementById(`chevron-${openFaq}`);
+                prevAnswer.classList.remove('open');
+                prevChevron.classList.remove('rotate');
+            }
+            
+            // Toggle current FAQ
+            if (openFaq === id) {
+                answer.classList.remove('open');
+                chevron.classList.remove('rotate');
+                openFaq = null;
+            } else {
+                answer.classList.add('open');
+                chevron.classList.add('rotate');
+                openFaq = id;
+            }
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Page navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+        // 在product.html的JS中添加
+        window.addEventListener('load', () => {
+            if(window.location.hash) {
+                const target = document.querySelector(window.location.hash);
+                if(target) target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+        // Initialize Lucide Icons
+        lucide.createIcons();
+        
+        // ====== 购物车持久化功能 ======
+        // 获取或初始化购物车数据
+        function getCartData() {
+            const cartData = localStorage.getItem('pawtrax_cart');
+            return cartData ? JSON.parse(cartData) : {
+                items: [],
+                total: 0
+            };
+        }
+
+        // 保存购物车数据到localStorage
+        function saveCartData(cart) {
+            localStorage.setItem('pawtrax_cart', JSON.stringify(cart));
+        }
+
+        // 添加到购物车函数
+        function addToCart() {
+            const productId = this.dataset.productId;
+            const productName = this.dataset.productName;
+            const productPrice = parseFloat(this.dataset.productPrice);
+
+            // 从localStorage获取当前购物车数据
+            let cart = getCartData();
+            
+            // 检查是否已存在相同商品
+            const existingItem = cart.items.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.items.push({
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    quantity: 1
+                });
+            }
+
+            cart.total += productPrice;
+            
+            // 保存更新后的购物车数据
+            saveCartData(cart);
+            
+            // 更新UI
+            updateCartUI(cart);
+
+            // 按钮反馈效果
+            this.textContent = 'Added!';
+            this.classList.remove('bg-orange-500', 'hover:bg-orange-600');
+            this.classList.add('bg-amber-600', 'hover:bg-amber-700');
+
+            // 显示Toast通知
+            showToast(`${productName} added to cart`);
+
+            // 1秒后恢复按钮状态
+            const button = this;
+            setTimeout(() => {
+                button.textContent = 'Add to Cart';
+                button.classList.remove('bg-amber-600', 'hover:bg-amber-700');
+                button.classList.add('bg-orange-500', 'hover:bg-orange-600');
+            }, 1000);
+        }
+
+        // 更新购物车UI
+        function updateCartUI(cart) {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            const cartCount = document.querySelector('#cart-icon .absolute');
+
+            cartItemsContainer.innerHTML = '';
+
+            if (cart.items.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-8">Your cart is empty</p>';
+            } else {
+                cart.items.forEach(item => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'flex py-4 border-b border-gray-200';
+                    cartItem.innerHTML = `
+                        <div class="ml-4 flex-1">
+                            <div class="flex justify-between">
+                                <h3 class="text-gray-900">${item.name}</h3>
+                                <p class="ml-4 text-gray-900">$${(item.price * item.quantity).toFixed(2)}</p>
+                            </div>
+                            <div class="flex items-center mt-2">
+                                <button class="quantity-btn px-2" data-action="decrease" data-id="${item.id}">-</button>
+                                <span class="mx-2">${item.quantity}</span>
+                                <button class="quantity-btn px-2" data-action="increase" data-id="${item.id}">+</button>
+                                <button class="remove-btn text-red-500 ml-4" data-id="${item.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(cartItem);
+                });
+            }
+
+            // 更新总价和数量
+            cartTotal.textContent = `$${cart.total.toFixed(2)}`;
+            if (cartCount) {
+                cartCount.textContent = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+            }
+        }
+
+        // 显示Toast通知
+        function showToast(message) {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast bg-amber-200 text-amber-800 px-4 py-2 rounded-lg shadow-lg border border-amber-300';
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // 切换购物车显示/隐藏
+        function toggleCart() {
+            const cartModal = document.getElementById('cart-modal');
+            cartModal.classList.toggle('hidden');
+            document.body.style.overflow = cartModal.classList.contains('hidden') ? 'auto' : 'hidden';
+        }
+
+        // 初始化事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从localStorage加载购物车数据并更新UI
+            const cart = getCartData();
+            updateCartUI(cart);
+            
+            // 购物车图标点击
+            if (document.getElementById('cart-icon')) {
+                document.getElementById('cart-icon').addEventListener('click', toggleCart);
+            }
+
+            // 关闭购物车按钮
+            if (document.getElementById('close-cart')) {
+                document.getElementById('close-cart').addEventListener('click', toggleCart);
+            }
+
+            // 遮罩层点击关闭
+            if (document.getElementById('cart-backdrop')) {
+                document.getElementById('cart-backdrop').addEventListener('click', toggleCart);
+            }
+
+            // 添加购物车按钮事件委托
+            document.body.addEventListener('click', function(e) {
+                if (e.target.classList.contains('add-to-cart')) {
+                    addToCart.call(e.target);
+                }
+
+                // 处理购物车内的数量按钮
+                if (e.target.classList.contains('quantity-btn')) {
+                    const action = e.target.dataset.action;
+                    const productId = e.target.dataset.id;
+                    
+                    // 从localStorage获取当前购物车数据
+                    let cart = getCartData();
+                    const item = cart.items.find(item => item.id === productId);
+
+                    if (item) {
+                        if (action === 'increase') {
+                            item.quantity += 1;
+                            cart.total += item.price;
+                        } else if (action === 'decrease' && item.quantity > 1) {
+                            item.quantity -= 1;
+                            cart.total -= item.price;
+                        }
+                        
+                        // 保存更新后的购物车数据
+                        saveCartData(cart);
+                        
+                        // 更新UI
+                        updateCartUI(cart);
+                    }
+                }
+
+                // 处理删除按钮
+                if (e.target.classList.contains('remove-btn') || e.target.closest('.remove-btn')) {
+                    const btn = e.target.classList.contains('remove-btn') ? 
+                              e.target : e.target.closest('.remove-btn');
+                    const productId = btn.dataset.id;
+                    
+                    // 从localStorage获取当前购物车数据
+                    let cart = getCartData();
+                    const index = cart.items.findIndex(item => item.id === productId);
+
+                    if (index !== -1) {
+                        const item = cart.items[index];
+                        cart.total -= item.price * item.quantity;
+                        cart.items.splice(index, 1);
+                        
+                        // 保存更新后的购物车数据
+                        saveCartData(cart);
+                        
+                        // 更新UI
+                        updateCartUI(cart);
+                    }
+                }
+            });
+
+            // 结账按钮
+            if (document.getElementById('checkout-btn')) {
+                document.getElementById('checkout-btn').addEventListener('click', function() {
+                    const cart = getCartData();
+                    if (cart.items.length === 0) {
+                        showToast('Your cart is empty!');
+                        return;
+                    }
+                    alert('Proceeding to checkout! Total: $' + cart.total.toFixed(2));
+                });
+            }
+        });
+    </script>
+</body>
+</html>
